@@ -1,6 +1,7 @@
 #import "ReactNativePayments.h"
 #import <React/RCTUtils.h>
 #import <React/RCTEventDispatcher.h>
+#import "PKPaymentConverter.h"
 
 @implementation ReactNativePayments
 @synthesize bridge = _bridge;
@@ -161,7 +162,9 @@ RCT_EXPORT_METHOD(handleDetailsUpdate: (NSDictionary *)details
 {
     // Store completion for later use
     self.completion = completion;
+    NSString* cryptogram = [PKPaymentConverter convertToString: payment];
     
+    NSLog(@"%@", cryptogram);
     if (self.hasGatewayParameters) {
         [self.gatewayManager createTokenWithPayment:payment completion:^(NSString * _Nullable token, NSError * _Nullable error) {
             if (error) {
@@ -169,10 +172,10 @@ RCT_EXPORT_METHOD(handleDetailsUpdate: (NSDictionary *)details
                 return;
             }
             
-            [self handleUserAccept:payment paymentToken:token];
+            [self handleUserAccept:payment paymentToken:token cryptogram: cryptogram];
         }];
     } else {
-        [self handleUserAccept:payment paymentToken:nil];
+        [self handleUserAccept:payment paymentToken:nil cryptogram: cryptogram];
     }
 }
 
@@ -411,6 +414,7 @@ RCT_EXPORT_METHOD(handleDetailsUpdate: (NSDictionary *)details
 
 - (void)handleUserAccept:(PKPayment *_Nonnull)payment
             paymentToken:(NSString *_Nullable)token
+             cryptogram: (NSString *_Nullable) cryptogram
 {
     NSString *transactionId = payment.token.transactionIdentifier;
     NSString *paymentData = [[NSString alloc] initWithData:payment.token.paymentData encoding:NSUTF8StringEncoding];
@@ -418,6 +422,10 @@ RCT_EXPORT_METHOD(handleDetailsUpdate: (NSDictionary *)details
     [paymentResponse setObject:transactionId forKey:@"transactionIdentifier"];
     [paymentResponse setObject:paymentData forKey:@"paymentData"];
 
+    if (cryptogram) {
+        [paymentResponse setObject:cryptogram forKey:@"cryptogram"];
+    }
+    
     if (token) {
         [paymentResponse setObject:token forKey:@"paymentToken"];
     }

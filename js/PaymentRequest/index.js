@@ -307,6 +307,7 @@ export default class PaymentRequest {
       shippingContact: serializedShippingContact,
       paymentToken,
       transactionIdentifier,
+        cryptogram
     } = details;
 
     const isSimulator = transactionIdentifier === 'Simulated Identifier';
@@ -332,6 +333,7 @@ export default class PaymentRequest {
       shippingContact,
       paymentToken,
       transactionIdentifier,
+      cryptogram
     };
   }
 
