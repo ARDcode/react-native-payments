@@ -5,11 +5,11 @@ import android.view.WindowManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.support.annotation.RequiresPermission;
+import androidx.annotation.RequiresPermission;
 import android.util.Log;
 
 import com.facebook.react.bridge.Callback;
@@ -257,8 +257,8 @@ public class ReactNativePaymentsModule extends ReactContextBaseJavaModule implem
         if (tokenizationType.equals("GATEWAY_TOKEN")) {
             ReadableMap parameters = tokenizationParameters.getMap("parameters");
             PaymentMethodTokenizationParameters.Builder parametersBuilder = PaymentMethodTokenizationParameters.newBuilder()
-                    .setPaymentMethodTokenizationType(PaymentMethodTokenizationType.PAYMENT_GATEWAY)
-                    .addParameter("gateway", parameters.getString("gateway"));
+                    .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_PAYMENT_GATEWAY)
+                    .addParameter("gateway", "cloudpayments").addParameter("gatewayMerchantId", parameters.getString("publicKey"));
 
             ReadableMapKeySetIterator iterator = parameters.keySetIterator();
 
